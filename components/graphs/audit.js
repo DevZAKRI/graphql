@@ -4,7 +4,7 @@ export const AuditRatio = (totalUp, totalDown, size = 200) => {
     const total = totalUp + totalDown;
     const totalUpPercent = totalUp / total;
     const totalDownPercent = totalDown / total;
-    const radius = size / 2 -10;
+    const radius = size / 2 -20;
     const strokeWidth = 20;
     const center = size / 2;
     const totalUpAngle = totalUpPercent * 360;
@@ -70,11 +70,11 @@ export const AuditRatio = (totalUp, totalDown, size = 200) => {
     document.body.appendChild(tooltip);
     totalUpPath.addEventListener('mouseenter', () => {
         tooltip.style.display = 'block';
-        tooltip.textContent = `Given: ${kb(a)}KB`;
+        tooltip.textContent = `Given: ${kb(totalUp)}KB`;
     });
     totalDownPath.addEventListener('mouseenter', () => {
         tooltip.style.display = 'block';
-        tooltip.textContent = `Received: ${kb(b)}KB`;
+        tooltip.textContent = `Received: ${kb(totalDown)}KB`;
     });
     totalUpPath.addEventListener('mouseleave', () => {
         tooltip.style.display = 'none';
