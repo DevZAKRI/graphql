@@ -19,8 +19,8 @@ export const userinfo = (user) => {
     }
 
     ctr.append(
-        createRow('Full Name:', `${user.firstName} ${user.lastName}`, 'fullName'),
         createRow('Username:', user.login, 'username'),
+        createRow('Full Name:', `${user.firstName} ${user.lastName}`, 'fullName'),
         createRow('City:', user.city, 'city'),
         createRow('Campus:', user.campus, 'campus'),
         createRow('Created At:', new Date(user.createdAt).toLocaleDateString(), 'createdAt'),

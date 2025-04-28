@@ -23,7 +23,7 @@ export const loadMainPage = (data) => {
     auditHolder.append(autidratio)
     document.body.append(skillsSection, totalxp, projectSec, auditHolder)
 }
-export const kb = (b) => {
+export const kb = (b) => { // Convert xp to KB
     let k = b / 1000
     return Math.round(k)!==k?k.toFixed(1):k
 }

@@ -1,14 +1,14 @@
 import { kb } from "../../profile.js";
 
-export const AuditRatio = (a, b, size = 200) => {
-    const total = a + b;
-    const aPercent = a / total;
-    const bPercent = b / total;
+export const AuditRatio = (totalUp, totalDown, size = 200) => {
+    const total = totalUp + totalDown;
+    const totalUpPercent = totalUp / total;
+    const totalDownPercent = totalDown / total;
     const radius = size / 2 -10;
     const strokeWidth = 20;
     const center = size / 2;
-    const aAngle = aPercent * 360;
-    const bAngle = bPercent * 360;
+    const totalUpAngle = totalUpPercent * 360;
+    const totalDownAngle = totalDownPercent * 360;
     function  getArcPath(startAngle, sweepAngle) {
         const largeArc = sweepAngle > 180 ? 1 : 0;
         const start = polarToCartesian(center, center, radius, startAngle);
@@ -25,24 +25,24 @@ export const AuditRatio = (a, b, size = 200) => {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', size);
     svg.setAttribute('height', size);
-    const aPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    aPath.setAttribute('d', getArcPath(0, aAngle));
-    aPath.setAttribute('stroke', '#4b7bec');
-    aPath.setAttribute('stroke-width', strokeWidth);
-    aPath.setAttribute('fill', 'none');
-    svg.appendChild(aPath);
-    const bPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    bPath.setAttribute('d', getArcPath(aAngle, bAngle));
-    bPath.setAttribute('stroke', '#fd9644');
-    bPath.setAttribute('stroke-width', strokeWidth);
-    bPath.setAttribute('fill', 'none');
-    svg.appendChild(bPath);
+    const totalUpPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    totalUpPath.setAttribute('d', getArcPath(0, totalUpAngle));
+    totalUpPath.setAttribute('stroke', '#4b7bec');
+    totalUpPath.setAttribute('stroke-width', strokeWidth);
+    totalUpPath.setAttribute('fill', 'none');
+    svg.appendChild(totalUpPath);
+    const totalDownPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    totalDownPath.setAttribute('d', getArcPath(totalUpAngle, totalDownAngle));
+    totalDownPath.setAttribute('stroke', '#ff0000');
+    totalDownPath.setAttribute('stroke-width', strokeWidth);
+    totalDownPath.setAttribute('fill', 'none');
+    svg.appendChild(totalDownPath);
     const centerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     centerCircle.setAttribute('cx', center);
     centerCircle.setAttribute('cy', center);
     centerCircle.setAttribute('r', radius - strokeWidth);
     svg.appendChild(centerCircle);
-    const ratio = (a / b).toFixed(1);
+    const ratio = (totalUp / totalDown).toFixed(1);
     let ratioColor = 'red';
     if (ratio > 1.2) {
         ratioColor = 'green';
@@ -52,6 +52,7 @@ export const AuditRatio = (a, b, size = 200) => {
         ratioColor = 'orange';
     }
     const ratioText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    
     ratioText.textContent = `${ratio}`;
     ratioText.setAttribute('x', center);
     ratioText.setAttribute('y', center);
@@ -67,18 +68,18 @@ export const AuditRatio = (a, b, size = 200) => {
     tooltip.style.padding = '5px';
     tooltip.style.borderRadius = '4px';
     document.body.appendChild(tooltip);
-    aPath.addEventListener('mouseenter', () => {
+    totalUpPath.addEventListener('mouseenter', () => {
         tooltip.style.display = 'block';
         tooltip.textContent = `Given: ${kb(a)}KB`;
     });
-    bPath.addEventListener('mouseenter', () => {
+    totalDownPath.addEventListener('mouseenter', () => {
         tooltip.style.display = 'block';
         tooltip.textContent = `Received: ${kb(b)}KB`;
     });
-    aPath.addEventListener('mouseleave', () => {
+    totalUpPath.addEventListener('mouseleave', () => {
         tooltip.style.display = 'none';
     });
-    bPath.addEventListener('mouseleave', () => {
+    totalDownPath.addEventListener('mouseleave', () => {
         tooltip.style.display = 'none';
     });
     svg.addEventListener('mousemove', (event) => {

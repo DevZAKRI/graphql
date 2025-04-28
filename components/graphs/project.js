@@ -77,7 +77,7 @@ export const projectsGraph = (data) => {
   title.setAttribute("y", 24);
   title.setAttribute("text-anchor", "middle");
   title.setAttribute("style", "color: rgb(51, 51, 51); font-size: 18px;");
-  title.textContent = "Projects";
+  title.textContent = "Last 5 Projects";
   svg.appendChild(title);
   return container;
 };
