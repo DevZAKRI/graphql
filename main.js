@@ -1,87 +1,89 @@
 import { renderLoginForm } from "./components/signin.js";
 import { loadMainPage } from "./profile.js";
 const API_GRAPHQL_URL = "https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql";
-let query = `{
-  user {
+
+let query = `
+  fragment UserDetails on user {
     login
     firstName
     lastName
     email: attrs(path: "email")
     campus
-    city : attrs(path: "city")
+    city: attrs(path: "city")
     createdAt
     totalUp
     totalDown
   }
-  xp:transaction(where: { type: { _eq: "xp" }, event: { object: { name: { _eq: "Module" } } } }, order_by: {createdAt:desc})
-    {
+
+  fragment SkillAmount on transaction_aggregate {
+    aggregate {
+      max {
+        amount
+      }
+    }
+  }
+
+  {
+    user {
+      ...UserDetails
+    }
+    
+    xp: transaction(
+      where: { 
+        type: { _eq: "xp" }, 
+        event: { object: { name: { _eq: "Module" } } } 
+      },
+      order_by: { createdAt: desc }
+    ) {
       path
       amount
     }
-   lvl: transaction_aggregate(
-      where: { type: { _eq: "level" }, event: { object: { name: { _eq: "Module" } } } }
-    ) {
-      aggregate {
-        max {
-          amount
-        }
+    
+    lvl: transaction_aggregate(
+      where: { 
+        type: { _eq: "level" }, 
+        event: { object: { name: { _eq: "Module" } } } 
       }
-    }
-        back: transaction_aggregate(
-      where: { type: { _eq: "skill_back-end" }, event: { object: { name: { _eq: "Module" } } } }
     ) {
-      aggregate {
-        max {
-          amount
-        }
-      }
+      ...SkillAmount
     }
-        front: transaction_aggregate(
-      where: { type: { _eq: "skill_front-end" }, event: { object: { name: { _eq: "Module" } } } }
-    ) {
-      aggregate {
-        max {
-          amount
-        }
-      }
-    }
-        html: transaction_aggregate(
-      where: { type: { _eq: "skill_html" }, event: { object: { name: { _eq: "Module" } } } }
-    ) {
-      aggregate {
-        max {
-          amount
-        }
-      }
-    }
-  go: transaction_aggregate(
+
+    go: transaction_aggregate(
       where: { type: { _eq: "skill_go" }, event: { object: { name: { _eq: "Module" } } } }
     ) {
-      aggregate {
-        max {
-          amount
-        }
-      }
+      ...SkillAmount
     }
-  prog: transaction_aggregate(
-      where: { type: { _eq: "skill_prog" }, event: { object: { name: { _eq: "Module" } } } }
-    ) {
-      aggregate {
-        max {
-          amount
-        }
-      }
-    }
-  js: transaction_aggregate(
+
+    js: transaction_aggregate(
       where: { type: { _eq: "skill_js" }, event: { object: { name: { _eq: "Module" } } } }
     ) {
-      aggregate {
-        max {
-          amount
-        }
-      }
+      ...SkillAmount
     }
-}
+
+    prog: transaction_aggregate(
+      where: { type: { _eq: "skill_prog" }, event: { object: { name: { _eq: "Module" } } } }
+    ) {
+      ...SkillAmount
+    }
+
+    html: transaction_aggregate(
+      where: { type: { _eq: "skill_html" }, event: { object: { name: { _eq: "Module" } } } }
+    ) {
+      ...SkillAmount
+    }
+
+    back: transaction_aggregate(
+      where: { type: { _eq: "skill_back-end" }, event: { object: { name: { _eq: "Module" } } } }
+    ) {
+      ...SkillAmount
+    }
+
+    front: transaction_aggregate(
+      where: { type: { _eq: "skill_front-end" }, event: { object: { name: { _eq: "Module" } } } }
+    ) {
+      ...SkillAmount
+    }
+  }
 `
 
 export const getData = () => {

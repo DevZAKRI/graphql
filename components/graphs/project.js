@@ -1,10 +1,11 @@
 export const projectsGraph = (data) => {
   const chartWidth = 600;
   const chartHeight = 300;
-  const maxValue = Math.max(...data.map(d => d.value));
-  const barWidth = chartWidth / data.length;
+  const maxAbsValue = data.length > 0 ? Math.max(...data.map(d => Math.abs(d.value))) : 0;
+  const barWidth = data.length > 0 ? chartWidth / data.length : 0;
   const viewWidth = 650;
   const viewHeight = 400;
+  const centerY = 200; // New center baseline position
   const container = document.createElement("div");
   container.style.position = "relative";
   container.style.width = "100%";
@@ -43,16 +44,25 @@ export const projectsGraph = (data) => {
   chartArea.setAttribute("width", chartWidth);
   chartArea.setAttribute("height", chartHeight);
   svg.appendChild(chartArea);
-  data.forEach((item, index) => {
-    const barHeight = (item.value / maxValue) * chartHeight;
+  // Add center line
+  const centerLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  centerLine.setAttribute("x1", "10");
+  centerLine.setAttribute("y1", centerY);
+  centerLine.setAttribute("x2", chartWidth + 10);
+  centerLine.setAttribute("y2", centerY);
+  centerLine.setAttribute("stroke", "#999");
+  centerLine.setAttribute("stroke-width", "1");
+  svg.appendChild(centerLine);
+  data.forEach((item, index) => {    
+    const barHeight = Math.abs(item.value) / maxAbsValue * (chartHeight / 2); // Half chart height for scaling
     const x = (index * barWidth) + 10;
-    const y = 350- barHeight;
+    const y = item.value >= 0 ? centerY - barHeight : centerY;
     const bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     bar.setAttribute("x", x);
     bar.setAttribute("y", y);
     bar.setAttribute("width", barWidth - 10);
     bar.setAttribute("height", barHeight);
-    bar.setAttribute("fill", "#94d13d");
+    bar.setAttribute("fill", item.value >= 0 ? "#94d13d" : "#ff4d4d");
     bar.style.cursor = "pointer";
     bar.addEventListener("mousemove", (e) => {
       const rect = svg.getBoundingClientRect();
@@ -67,7 +77,7 @@ export const projectsGraph = (data) => {
     svg.appendChild(bar);
     const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
     label.setAttribute("x", x + barWidth / 2);
-    label.setAttribute("y", 350 + 15);
+    label.setAttribute("y", item.value >= 0 ? y - 5 : y + barHeight + 15);
     label.setAttribute("text-anchor", "middle");
     label.textContent = item.name;
     svg.appendChild(label);
@@ -77,7 +87,7 @@ export const projectsGraph = (data) => {
   title.setAttribute("y", 24);
   title.setAttribute("text-anchor", "middle");
   title.setAttribute("style", "color: rgb(51, 51, 51); font-size: 18px;");
-  title.textContent = "Last 5 Projects";
+  title.textContent = "XP Tracking by Project";
   svg.appendChild(title);
   return container;
 };
