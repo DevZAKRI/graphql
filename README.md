@@ -2,7 +2,7 @@
 
 A dynamic web application that displays student information and progress from the Zone01 school using GraphQL API.
 
-## Features
+## Features 
 
 - **Authentication System**: Secure login system using JWT tokens
 - **Student Profile**: Displays student's personal information and campus details
